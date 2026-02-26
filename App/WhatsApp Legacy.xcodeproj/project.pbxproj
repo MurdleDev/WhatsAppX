@@ -36,7 +36,6 @@
 		C515489A2C9CE6B70080E7B8 /* blank.png in Resources */ = {isa = PBXBuildFile; fileRef = C51548992C9CE6B70080E7B8 /* blank.png */; };
 		C515489D2C9CED460080E7B8 /* MicRecRed.png in Resources */ = {isa = PBXBuildFile; fileRef = C515489B2C9CED460080E7B8 /* MicRecRed.png */; };
 		C515489E2C9CED460080E7B8 /* MicRecRed@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C515489C2C9CED460080E7B8 /* MicRecRed@2x.png */; };
-		C51565222C55990A0029E9AE /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C51565212C55990A0029E9AE /* Default-568h@2x.png */; };
 		C515652D2C559E590029E9AE /* Settings.png in Resources */ = {isa = PBXBuildFile; fileRef = C515652B2C559E590029E9AE /* Settings.png */; };
 		C515652E2C559E590029E9AE /* Settings@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C515652C2C559E590029E9AE /* Settings@2x.png */; };
 		C51565362C559F350029E9AE /* Chats.png in Resources */ = {isa = PBXBuildFile; fileRef = C51565342C559F350029E9AE /* Chats.png */; };
@@ -282,8 +281,6 @@
 		C5C074222C9DCCA3003113CC /* ScrubberTrackProgressInc@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C5C0741E2C9DCCA3003113CC /* ScrubberTrackProgressInc@2x.png */; };
 		C5C074232C9DCCA3003113CC /* ScrubberTrackProgressOut.png in Resources */ = {isa = PBXBuildFile; fileRef = C5C0741F2C9DCCA3003113CC /* ScrubberTrackProgressOut.png */; };
 		C5C074242C9DCCA3003113CC /* ScrubberTrackProgressOut@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C5C074202C9DCCA3003113CC /* ScrubberTrackProgressOut@2x.png */; };
-		C5C210222C5D1C6E00472A43 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = C5C210212C5D1C6E00472A43 /* Default.png */; };
-		C5C210242C5D1C7600472A43 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C5C210232C5D1C7600472A43 /* Default@2x.png */; };
 		C5C23AB92C9D3C91003DFD97 /* Scrubber.png in Resources */ = {isa = PBXBuildFile; fileRef = C5C23AB72C9D3C91003DFD97 /* Scrubber.png */; };
 		C5C23ABA2C9D3C91003DFD97 /* Scrubber@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C5C23AB82C9D3C91003DFD97 /* Scrubber@2x.png */; };
 		C5C23ABD2C9D40BD003DFD97 /* DeletedMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = C5C23ABC2C9D40BD003DFD97 /* DeletedMessage.m */; };
@@ -345,6 +342,7 @@
 		C5F792D02CC7434D005DD34F /* AudioMessageBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = C5F792CE2CC7434C005DD34F /* AudioMessageBackground.png */; };
 		C5F792D12CC7434D005DD34F /* AudioMessageBackground@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C5F792CF2CC7434C005DD34F /* AudioMessageBackground@2x.png */; };
 		C5FACFF72CCFAACD00804003 /* JSMessageAttachView.m in Sources */ = {isa = PBXBuildFile; fileRef = C5FACFF62CCFAACD00804003 /* JSMessageAttachView.m */; };
+		F3AF6C202F50CAD300EAD77D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F3AF6C1F2F50CAD300EAD77D /* LaunchScreen.storyboard */; };
 		F3B9FE982F4CFDF100E1404C /* libwebp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3B9FE972F4CFDE400E1404C /* libwebp.a */; };
 		F3B9FE9A2F4CFE2B00E1404C /* libsharpyuv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3B9FE992F4CFE2500E1404C /* libsharpyuv.a */; };
 		F3EDE4C32F4EFA5100A075F8 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = F3EDE4C22F4EFA5100A075F8 /* JSONKit.m */; };
@@ -406,7 +404,6 @@
 		C51548992C9CE6B70080E7B8 /* blank.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blank.png; sourceTree = "<group>"; };
 		C515489B2C9CED460080E7B8 /* MicRecRed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MicRecRed.png; sourceTree = "<group>"; };
 		C515489C2C9CED460080E7B8 /* MicRecRed@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MicRecRed@2x.png"; sourceTree = "<group>"; };
-		C51565212C55990A0029E9AE /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		C515652B2C559E590029E9AE /* Settings.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Settings.png; sourceTree = "<group>"; };
 		C515652C2C559E590029E9AE /* Settings@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Settings@2x.png"; sourceTree = "<group>"; };
 		C51565342C559F350029E9AE /* Chats.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Chats.png; sourceTree = "<group>"; };
@@ -692,8 +689,6 @@
 		C5C0741E2C9DCCA3003113CC /* ScrubberTrackProgressInc@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ScrubberTrackProgressInc@2x.png"; sourceTree = "<group>"; };
 		C5C0741F2C9DCCA3003113CC /* ScrubberTrackProgressOut.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ScrubberTrackProgressOut.png; sourceTree = "<group>"; };
 		C5C074202C9DCCA3003113CC /* ScrubberTrackProgressOut@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ScrubberTrackProgressOut@2x.png"; sourceTree = "<group>"; };
-		C5C210212C5D1C6E00472A43 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
-		C5C210232C5D1C7600472A43 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		C5C23AB72C9D3C91003DFD97 /* Scrubber.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Scrubber.png; sourceTree = "<group>"; };
 		C5C23AB82C9D3C91003DFD97 /* Scrubber@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Scrubber@2x.png"; sourceTree = "<group>"; };
 		C5C23ABB2C9D40BD003DFD97 /* DeletedMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeletedMessage.h; sourceTree = "<group>"; };
@@ -770,6 +765,7 @@
 		C5F792CF2CC7434C005DD34F /* AudioMessageBackground@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AudioMessageBackground@2x.png"; sourceTree = "<group>"; };
 		C5FACFF52CCFAACD00804003 /* JSMessageAttachView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMessageAttachView.h; sourceTree = "<group>"; };
 		C5FACFF62CCFAACD00804003 /* JSMessageAttachView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSMessageAttachView.m; sourceTree = "<group>"; };
+		F3AF6C1F2F50CAD300EAD77D /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F3B9FE972F4CFDE400E1404C /* libwebp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libwebp.a; sourceTree = "<group>"; };
 		F3B9FE992F4CFE2500E1404C /* libsharpyuv.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsharpyuv.a; path = WebP/libsharpyuv.a; sourceTree = "<group>"; };
 		F3EDE4C12F4EFA5100A075F8 /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
@@ -906,9 +902,6 @@
 			children = (
 				C52929252C66E3CC00B9E15A /* Icon@2x.png */,
 				C52929232C66E3CA00B9E15A /* Icon.png */,
-				C5C210232C5D1C7600472A43 /* Default@2x.png */,
-				C5C210212C5D1C6E00472A43 /* Default.png */,
-				C51565212C55990A0029E9AE /* Default-568h@2x.png */,
 				C525E3E82C549FE300F2B7AB /* WhatsApp Legacy */,
 				C525E3E12C549FE300F2B7AB /* Frameworks */,
 				C525E3DF2C549FE300F2B7AB /* Products */,
@@ -959,6 +952,7 @@
 				C56D1B752C54A19C00A019A5 /* Lib */,
 				C525E3F12C549FE300F2B7AB /* AppDelegate.h */,
 				C525E3F22C549FE300F2B7AB /* AppDelegate.m */,
+				F3AF6C1F2F50CAD300EAD77D /* LaunchScreen.storyboard */,
 				C525E3E92C549FE300F2B7AB /* Supporting Files */,
 			);
 			path = "WhatsApp Legacy";
@@ -1455,11 +1449,11 @@
 				C56D1B6D2C54A18300A019A5 /* AboutAnimation@2x.png in Resources */,
 				C56D1B6E2C54A18300A019A5 /* tableViewBackground.png in Resources */,
 				C56D1B6F2C54A18300A019A5 /* tableViewBackground@2x.png in Resources */,
-				C51565222C55990A0029E9AE /* Default-568h@2x.png in Resources */,
 				C515652D2C559E590029E9AE /* Settings.png in Resources */,
 				C515652E2C559E590029E9AE /* Settings@2x.png in Resources */,
 				C51565362C559F350029E9AE /* Chats.png in Resources */,
 				C51565372C559F350029E9AE /* Chats@2x.png in Resources */,
+				F3AF6C202F50CAD300EAD77D /* LaunchScreen.storyboard in Resources */,
 				C515653F2C55B57C0029E9AE /* News.png in Resources */,
 				C51565402C55B57C0029E9AE /* News@2x.png in Resources */,
 				C53C76082C560149004C96BD /* ChatPreviewItem.xib in Resources */,
@@ -1494,8 +1488,6 @@
 				C57AFD232C5BDE5E00E7A2B1 /* send.png in Resources */,
 				C57AFD242C5BDE5E00E7A2B1 /* send@2x.png in Resources */,
 				C5866DAA2C5C95CA0012E7A3 /* ProfileViewController.xib in Resources */,
-				C5C210222C5D1C6E00472A43 /* Default.png in Resources */,
-				C5C210242C5D1C7600472A43 /* Default@2x.png in Resources */,
 				C57DE8452C62DDD0007DBB7C /* WelcomeViewController.xib in Resources */,
 				C57DE8482C62DE0E007DBB7C /* PaymentWP.jpg in Resources */,
 				C57DE8492C62DE0E007DBB7C /* PaymentWP@2x.jpg in Resources */,
@@ -1897,7 +1889,7 @@
 					"$(PROJECT_DIR)/WebP",
 				);
 				OTHER_CODE_SIGN_FLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = uk.calvink19.WhatsAppX;
+				PRODUCT_BUNDLE_IDENTIFIER = rs.murdle.ZevenApp;
 				PRODUCT_NAME = WhatsApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
@@ -1931,7 +1923,7 @@
 					"$(PROJECT_DIR)/WebP",
 				);
 				OTHER_CODE_SIGN_FLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = uk.calvink19.WhatsAppX;
+				PRODUCT_BUNDLE_IDENTIFIER = rs.murdle.ZevenApp;
 				PRODUCT_NAME = WhatsApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
@@ -2001,7 +1993,7 @@
 					"$(PROJECT_DIR)/WebP",
 				);
 				OTHER_CODE_SIGN_FLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = uk.calvink19.WhatsAppX;
+				PRODUCT_BUNDLE_IDENTIFIER = rs.murdle.ZevenApp;
 				PRODUCT_NAME = WhatsApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;

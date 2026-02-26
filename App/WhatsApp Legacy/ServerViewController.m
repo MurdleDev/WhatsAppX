@@ -53,13 +53,12 @@
     self.serverB.text = [[NSUserDefaults standardUserDefaults] stringForKey:@"wspl-b-address"];
     self.serverAport.text = [[NSUserDefaults standardUserDefaults] stringForKey:@"wspl-a-port"];
     
-    // Create Apply button
-    UIBarButtonItem *deleteButton = [[[UIBarButtonItem alloc]
-                                     initWithTitle:@"Delete Cache"
-                                     style:UIBarButtonItemStylePlain
-                                     target:self
-                                     action:@selector(delCacheBtn:)] autorelease];
+    self.deleteCacheButton.layer.cornerRadius = 4;
+    self.deleteCacheButton.layer.masksToBounds = YES;
     
+    self.resetSettingsButton.layer.cornerRadius = 4;
+    self.resetSettingsButton.layer.masksToBounds = YES;
+
     // Create Apply button
     UIBarButtonItem *applyButton = [[[UIBarButtonItem alloc]
                                      initWithTitle:@"Apply"
@@ -67,8 +66,7 @@
                                      target:self
                                      action:@selector(doneSetup:)] autorelease];
     
-    // Add both to right side of nav bar
-    self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:applyButton, deleteButton, nil];
+    self.navigationItem.rightBarButtonItem = applyButton;
 }
 
 - (IBAction)doneSetup:(id)sender {
@@ -84,7 +82,6 @@
         NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
         
         if (connection) {
-            AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
             [serverA resignFirstResponder];
             [serverB resignFirstResponder];
             
@@ -93,9 +90,9 @@
             [[NSUserDefaults standardUserDefaults] setObject:serverB.text forKey:@"wspl-b-address"];
             [[NSUserDefaults standardUserDefaults] setObject:serverAport.text forKey:@"wspl-a-port"];
             [[NSUserDefaults standardUserDefaults] synchronize];
-            //NSLog(@"%@ . %i", self.serverAport.text, [[[NSUserDefaults standardUserDefaults] stringForKey:@"wspl-a-port"] intValue]);
             
-            UIAlertView *alerta = [[UIAlertView alloc]initWithTitle:@"Applied" message:@"Please restart the app." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+            UIAlertView *alerta = [[UIAlertView alloc]initWithTitle:@"Applied" message:@"The app will now close." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+            alerta.tag = 1001;
             [alerta show];
 
         } else {
@@ -105,7 +102,7 @@
     }
 }
 
-- (IBAction)delCacheBtn:(id)sender {
+- (IBAction)deleteCacheTapped:(id)sender {
     NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSFileManager *fileManager = [NSFileManager defaultManager];
     
@@ -134,6 +131,30 @@
     [alerta show];
 }
 
+- (IBAction)resetSettingsTapped:(id)sender {
+    NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
+
+    [defs removeObjectForKey:@"wspl-a-address"];
+    [defs removeObjectForKey:@"wspl-b-address"];
+    [defs removeObjectForKey:@"wspl-a-port"];
+    [defs removeObjectForKey:@"doneSetup"];
+    [defs synchronize];
+
+    self.serverA.text = @"";
+    self.serverB.text = @"";
+    self.serverAport.text = @"";
+
+    UIAlertView *alerta = [[UIAlertView alloc] initWithTitle:@"Reset Complete" message:@"The app will now close." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    alerta.tag = 1001;
+    [alerta show];
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (alertView.tag == 1001) {
+        exit(0);
+    }
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -142,4 +163,7 @@
 
 
 
+- (void)dealloc {
+    [super dealloc];
+}
 @end

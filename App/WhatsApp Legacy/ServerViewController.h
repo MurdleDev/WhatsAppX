@@ -14,7 +14,12 @@
 @property (retain, nonatomic) IBOutlet UITextField *serverB;
 @property (retain, nonatomic) IBOutlet UITextField *serverAport;
 
+@property (retain, nonatomic) IBOutlet UIButton *deleteCacheButton;
+@property (retain, nonatomic) IBOutlet UIButton *resetSettingsButton;
+
+
 - (IBAction)doneSetup:(id)sender;
-- (IBAction)delCacheBtn:(id)sender;
+- (IBAction)deleteCacheTapped:(id)sender;
+- (IBAction)resetSettingsTapped:(id)sender;
 
 @end

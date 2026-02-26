@@ -151,7 +151,6 @@ alpha:1.0]
                          break;*/
                     case 0:
                         cell.textLabel.text = @"Server";
-                        cell.imageView.image = [UIImage imageNamed:@"gicons-key.png"];
                         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
                         break;
                         
@@ -161,7 +160,6 @@ alpha:1.0]
                 switch (indexPath.row) {
                     case 0:
                         cell.textLabel.text = @"About";
-                        cell.imageView.image = [UIImage imageNamed:@"gicons-about.png"];
                         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
                         break;
                 }
