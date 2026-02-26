@@ -33,6 +33,7 @@
 //  OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#import <QuartzCore/QuartzCore.h>
 #import "JSMessageInputView.h"
 #import "JSBubbleView.h"
 #import "NSString+JSMessagesView.h"
@@ -88,11 +89,15 @@
 #pragma mark - Setup
 - (void)setup
 {
-    self.image = [UIImage inputBar];
-    self.backgroundColor = [UIColor whiteColor];
+    self.backgroundColor = [UIColor colorWithWhite:0.97 alpha:1.0];
     self.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin);
     self.opaque = YES;
     self.userInteractionEnabled = YES;
+
+    UIView *topBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, 0.5)];
+    topBorder.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    topBorder.backgroundColor = [UIColor colorWithWhite:0.85 alpha:1.0];
+    [self addSubview:topBorder];
     [self setupTextView];
 }
 
@@ -116,6 +121,15 @@
     self.textView.keyboardAppearance = UIKeyboardAppearanceDefault;
     self.textView.keyboardType = UIKeyboardTypeDefault;
     self.textView.returnKeyType = UIReturnKeyDefault;
+    self.textView.layer.cornerRadius = 8.0f;
+    self.textView.layer.borderWidth = 1.0f;
+    self.textView.layer.borderColor = [UIColor colorWithWhite:0.82 alpha:1.0].CGColor;
+    self.textView.layer.shadowColor = [UIColor blackColor].CGColor;
+    self.textView.layer.shadowOpacity = 0.05f;
+    self.textView.layer.shadowOffset = CGSizeMake(0, 1);
+    self.textView.layer.shadowRadius = 0;
+    self.textView.textContainerInset = UIEdgeInsetsMake(6, 4, 6, 4);
+    self.textView.clipsToBounds = YES;
     [self addSubview:self.textView];
     
     GIFMenu *gifMenu = [[GIFMenu alloc] init];
@@ -154,7 +168,6 @@
                                                                                 0.0f,
                                                                                 self.textView.frame.size.width + 2.0f,
                                                                                 self.frame.size.height)];
-    self.inputFieldBack.image = [UIImage inputField];
     self.inputFieldBack.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
     self.inputFieldBack.backgroundColor = [UIColor clearColor];
     [self addSubview:self.inputFieldBack];

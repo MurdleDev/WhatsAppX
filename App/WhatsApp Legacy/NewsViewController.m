@@ -130,9 +130,7 @@
         [appDelegate.profileImages setObject:[UIImage imageWithData:imageData] forKey:cell.contactNumber];
     }
     if(![appDelegate.profileImages objectForKey:cell.contactNumber]){
-        [self performSelectorInBackground:@selector(downloadAndProcessImageProfile:) withObject:[NSDictionary dictionaryWithObjectsAndKeys:
-                                                                                                 cell, @"cell",
-                                                                                                 [NSNumber numberWithBool:false], @"isGroup", nil]];
+        [self performSelectorInBackground:@selector(downloadAndProcessImageProfile:) withObject:cell];
     } else {
         cell.largeImage = [appDelegate.profileImages objectForKey:cell.contactNumber];
         CGFloat targetWidth = (IS_RETINA ? 114.0 : 72.0); // Ajusta esto según tus necesidades
@@ -151,7 +149,7 @@
 
 - (void)downloadAndProcessImageProfile:(NSDictionary *)params {
     StatusPreviewItem *cell = [params objectForKey:@"cell"];
-    [WhatsAppAPI downloadAndProcessImage:cell.contactNumber andIsGroup:false];
+    [WhatsAppAPI downloadAndProcessImage:cell.contactNumber];
 }
 
 - (void)reloadNews

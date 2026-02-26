@@ -366,44 +366,86 @@ alpha:1.0]
             }
             
             for(NSDictionary *contact in appDelegate.contactsViewController.contactList){
-                if([[contact objectForKey:@"number"] isEqualToString:[[dic objectForKey:@"id"] objectForKey:@"user"]]){
-                    cell.contactNumber = [contact objectForKey:@"number"];
+                NSDictionary *contactIdDict = [contact[@"id"] isKindOfClass:[NSDictionary class]] ? contact[@"id"] : nil;
+                NSString *contactUser = [contactIdDict[@"user"] isKindOfClass:[NSString class]] ? contactIdDict[@"user"] : nil;
+                NSString *contactNumber = [contact[@"number"] isKindOfClass:[NSString class]] ? contact[@"number"] : nil;
+
+                NSString *targetUser = [[dic[@"id"] objectForKey:@"user"] isKindOfClass:[NSString class]]
+                                        ? dic[@"id"][@"user"]
+                                        : nil;
+
+                if (contactUser && targetUser && [contactUser isEqualToString:targetUser]) {
+                    cell.contactNumber = contactNumber ?: contactUser;
                     cell.navigationController = self.navigationController;
-                    if([contact objectForKey:@"name"]){
-                        if([[contact objectForKey:@"number"] isEqualToString:[appDelegate.contactsViewController.myContact objectForKey:@"number"]]){
-                            cell.profileName.text = WSPContactType_toString[YOUUSER];
-                        } else {
-                            cell.profileName.text = [contact objectForKey:@"name"];
-                        }
+
+                    NSNumber *isMyContact = contact[@"isMyContact"];
+                    NSString *shortName = [contact[@"shortName"] isKindOfClass:[NSString class]] ? contact[@"shortName"] : nil;
+                    NSString *pushName = [contact[@"pushname"] isKindOfClass:[NSString class]] ? contact[@"pushname"] : nil;
+
+                    NSString *displayName = nil;
+
+                    if ([isMyContact respondsToSelector:@selector(boolValue)] &&
+                        [isMyContact boolValue] &&
+                        shortName.length > 0) {
+                        displayName = shortName;
+                    } else if (pushName.length > 0) {
+                        displayName = pushName;
+                    } else if (contactNumber.length > 0) {
+                        displayName = contactNumber;
                     } else {
-                        //cell.profileName.text = [dic objectForKey:@"formattedNumber"];
-                        cell.profileName.text = [NSString stringWithFormat:@"~ %@",[contact objectForKey:@"pushname"]];
-                        cell.profileNumber.hidden = false;
-                        cell.profileNumber.text = [contact objectForKey:@"formattedNumber"];
+                        displayName = @"Unknown";
                     }
-                    cell.profileAdmin.hidden = ![[dic objectForKey:@"isAdmin"] boolValue];
-                    if([contact objectForKey:@"profileAbout"] != [NSNull null]){
-                        cell.profileAbout.text = [contact objectForKey:@"profileAbout"];
+
+                    NSString *myNumber = [appDelegate.contactsViewController.myContact[@"number"] isKindOfClass:[NSString class]]
+                                          ? appDelegate.contactsViewController.myContact[@"number"]
+                                          : nil;
+
+                    if (contactNumber && myNumber && [contactNumber isEqualToString:myNumber]) {
+                        cell.profileName.text = WSPContactType_toString[YOUUSER];
                     } else {
-                        cell.profileAbout.text = WSPInfoType_toString[DEFAULT];
+                        cell.profileName.text = displayName;
                     }
-                    NSData* imageData = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@-largeprofile", cell.contactNumber]];
-                    if(!imageData){
+
+                    if (contactNumber.length > 0) {
+                        cell.profileNumber.hidden = NO;
+                        cell.profileNumber.text = [NSString stringWithFormat:@"+%@", contactNumber];
+                    } else {
+                        cell.profileNumber.hidden = YES;
+                    }
+
+                    cell.profileAdmin.hidden = ![dic[@"isAdmin"] respondsToSelector:@selector(boolValue)] ||
+                                               ![dic[@"isAdmin"] boolValue];
+
+                    NSString *about = [contact[@"profileAbout"] isKindOfClass:[NSString class]] ? contact[@"profileAbout"] : nil;
+                    cell.profileAbout.text = about.length > 0 ? about : WSPInfoType_toString[DEFAULT];
+
+                    NSString *imageKey = cell.contactNumber;
+                    NSData *imageData = [[NSUserDefaults standardUserDefaults] objectForKey:
+                                         [NSString stringWithFormat:@"%@-largeprofile", imageKey]];
+
+                    if (!imageData) {
                         cell.largeImage = [UIImage imageNamed:@"PersonalChatOS6Large.png"];
                     } else {
-                        [appDelegate.profileImages setObject:[UIImage imageWithData:imageData] forKey:cell.contactNumber];
+                        UIImage *img = [UIImage imageWithData:imageData];
+                        if (img) {
+                            appDelegate.profileImages[imageKey] = img;
+                        }
                     }
-                    if(![appDelegate.profileImages objectForKey:[contact objectForKey:@"number"]]){
-                        [self performSelectorInBackground:@selector(downloadAndProcessImageContact:) withObject:cell.contactNumber];
+
+                    if (!appDelegate.profileImages[imageKey]) {
+                        [self performSelectorInBackground:@selector(downloadAndProcessImageContact:)
+                                               withObject:imageKey];
                     } else {
-                        cell.largeImage = [appDelegate.profileImages objectForKey:[contact objectForKey:@"number"]];
-                        CGFloat targetWidth = 114.0; // Ajusta esto según tus necesidades
-                        CGFloat targetHeight = 114.0; // Ajusta esto según tus necesidades
+                        cell.largeImage = appDelegate.profileImages[imageKey];
+
+                        CGFloat targetWidth = 114.0;
+                        CGFloat targetHeight = 114.0;
+
                         UIGraphicsBeginImageContext(CGSizeMake(targetWidth, targetHeight));
                         [cell.largeImage drawInRect:CGRectMake(0, 0, targetWidth, targetHeight)];
                         UIImage *scaledImage = UIGraphicsGetImageFromCurrentImageContext();
                         UIGraphicsEndImageContext();
-                        
+
                         [cell.profileImg setBackgroundImage:scaledImage forState:UIControlStateNormal];
                     }
                 }
@@ -420,7 +462,6 @@ alpha:1.0]
             if (cell == nil) {
                 cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
             }
-            
             cell.textLabel.text = [NSString stringWithFormat:@"New group with %@", [appDelegate.activeProfileView objectForKey:@"shortName"]];
             cell.textLabel.textColor = UIColorFromRGB(0x008800);
             cell.imageView.image = [UIImage imageNamed:@"gicons-addgroup.png"];
@@ -521,11 +562,11 @@ alpha:1.0]
 }
 
 - (void)downloadAndProcessImageContact:(NSString *)ocontactNumber {
-    [WhatsAppAPI downloadAndProcessImage:ocontactNumber andIsGroup:FALSE];
+    [WhatsAppAPI downloadAndProcessImage:ocontactNumber];
 }
 
 - (void)downloadAndProcessImageGroup:(NSString *)ocontactNumber {
-    [WhatsAppAPI downloadAndProcessImage:ocontactNumber andIsGroup:TRUE];
+    [WhatsAppAPI downloadAndProcessImage:ocontactNumber];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -538,7 +579,6 @@ alpha:1.0]
     } else {
         self.navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
     }
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:YES];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -551,7 +591,6 @@ alpha:1.0]
     } else {
         self.navigationController.navigationBar.barStyle = UIBarStyleDefault;
     }
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
 }
 
 /*

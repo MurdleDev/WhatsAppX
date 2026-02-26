@@ -25,7 +25,6 @@
 //  OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#import <QuartzCore/QuartzCore.h>
 #import "AppDelegate.h"
 #import "ChatViewController.h"
 #import "ContactsViewController.h"
@@ -42,6 +41,8 @@
 #import "NSData+Base64.h"
 #import "LocationViewController.h"
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <QuartzCore/QuartzCore.h>
+#import <AVFoundation/AVFoundation.h>
 
 #define IS_IOS4orHIGHER ([[[UIDevice currentDevice] systemVersion] floatValue] >= 4.0)
 
@@ -121,13 +122,6 @@
         [self scrollToBottomAnimated:NO];
         self.savedContentOffset = CGPointZero;
     }
-    
-    if(IS_IOS4orHIGHER){
-        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
-        self.navigationController.navigationBar.barStyle = UIBarStyleDefault;
-    } else {
-        self.navigationController.navigationBar.barStyle = UIBarStyleDefault;
-    }
 }
 
 - (void)loadStatusText:(BOOL)fromContact withDic:(NSDictionary *)dic andStatus:(NSString *)statusText {
@@ -147,23 +141,8 @@
     self.statusLabel.backgroundColor = [UIColor clearColor];
     self.statusLabel.shadowOffset = CGSizeMake(0, -1); // Desplazamiento de la sombra
     
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-        // iPad
-        self.nameLabel.textColor = [UIColor grayColor]; // Dark gray
-        self.statusLabel.textColor = [UIColor grayColor]; // Dark gray
-        self.nameLabel.shadowOffset = CGSizeMake(0, 1); // Shadow displacement
-        self.statusLabel.shadowOffset = CGSizeMake(0, 1); // Shadow displacement
-        self.nameLabel.shadowColor = [UIColor whiteColor]; // White
-        self.statusLabel.shadowColor = [UIColor whiteColor]; // White
-    } else {
-        // iPhone & iPod Touch
-        self.nameLabel.textColor = [UIColor whiteColor]; // White
-        self.statusLabel.textColor = [UIColor whiteColor]; // White
-        self.nameLabel.shadowOffset = CGSizeMake(0, -1); // Shadow displacement
-        self.statusLabel.shadowOffset = CGSizeMake(0, -1); // Shadow displacement
-        self.nameLabel.shadowColor = [UIColor colorWithWhite:0.0 alpha:0.5]; // Colour of shadow
-        self.statusLabel.shadowColor = [UIColor colorWithWhite:0.0 alpha:0.5]; // Colour of shadow
-    }
+    self.nameLabel.textColor = [UIColor blackColor];
+    self.statusLabel.textColor = [UIColor darkGrayColor];
 
     if (self.isGroup == false){
         BOOL isBusiness = [[appDelegate.activeProfileView objectForKey:@"isBusiness"] boolValue];
@@ -189,16 +168,46 @@
         //NSLog(@"Hello: %@", appDelegate.activeProfileView);
         for(NSDictionary *participantContact in participantsContacts){
             for(NSDictionary *contact in appDelegate.contactsViewController.contactList){
-                if([[contact objectForKey:@"number"] isEqualToString:[[participantContact objectForKey:@"id"] objectForKey:@"user"]]){
-                    
-                    if([[contact objectForKey:@"number"] isEqualToString:[appDelegate.contactsViewController.myContact objectForKey:@"number"]]){
+                id contactNumber = contact[@"number"];
+                NSDictionary *participantIdDict = participantContact[@"id"];
+                NSString *participantUser = nil;
+
+                if ([participantIdDict isKindOfClass:[NSDictionary class]]) {
+                    participantUser = participantIdDict[@"user"];
+                }
+
+                if ([contactNumber isKindOfClass:[NSString class]] &&
+                    [participantUser isKindOfClass:[NSString class]] &&
+                    [contactNumber isEqualToString:participantUser]) {
+
+                    NSString *myNumber = appDelegate.contactsViewController.myContact[@"number"];
+
+                    if ([myNumber isKindOfClass:[NSString class]] &&
+                        [contactNumber isEqualToString:myNumber]) {
+
                         [participantsNames addObject:WSPContactType_toString[YOUUSER]];
                     } else {
-                        if([[contact objectForKey:@"isMyContact"] boolValue] == true){
-                            [participantsNames addObject:[contact objectForKey:@"shortName"]];
+                        NSNumber *isMyContact = contact[@"isMyContact"];
+                        NSString *shortName = [contact[@"shortName"] isKindOfClass:[NSString class]] ? contact[@"shortName"] : nil;
+                        NSString *pushName = [contact[@"pushname"] isKindOfClass:[NSString class]] ? contact[@"pushname"] : nil;
+                        NSString *rawNumber = [contact[@"number"] isKindOfClass:[NSString class]] ? contact[@"number"] : nil;
+
+                        NSString *finalName = nil;
+
+                        if ([isMyContact respondsToSelector:@selector(boolValue)] &&
+                            [isMyContact boolValue] &&
+                            shortName.length > 0) {
+
+                            finalName = shortName;
+                        } else if (pushName.length > 0) {
+                            finalName = pushName;
+                        } else if (rawNumber.length > 0) {
+                            finalName = rawNumber;
                         } else {
-                            [participantsNames addObject:[contact objectForKey:@"formattedNumber"]];
+                            finalName = @"Unknown";
                         }
+
+                        [participantsNames addObject:finalName];
                     }
                 }
             }
@@ -445,38 +454,60 @@
             break;
         case 1:
             if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
-                // Check if video recording is available
-                NSArray *availableMediaTypes = [UIImagePickerController availableMediaTypesForSourceType:UIImagePickerControllerSourceTypeCamera];
                 
-                if ([availableMediaTypes containsObject:(NSString *)kUTTypeMovie]) {
-                    // Initialise UIImagePickerController
+                AVAuthorizationStatus cameraAuthStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+                AVAuthorizationStatus micAuthStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio];
+
+                if (cameraAuthStatus == AVAuthorizationStatusDenied || micAuthStatus == AVAuthorizationStatusDenied) {
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Permission Denied"
+                                                                    message:@"Please enable camera and microphone access in Settings"
+                                                                   delegate:nil
+                                                          cancelButtonTitle:@"OK"
+                                                          otherButtonTitles:nil];
+                    [alert show];
+                    return;
+                }
+
+                void (^presentCamera)(void) = ^{
                     self.imagePicker = [[UIImagePickerController alloc] init];
                     self.imagePicker.delegate = self;
                     self.imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
                     self.imagePicker.allowsEditing = NO;
-                    
-                    // Set to allow photos and videos
-                    self.imagePicker.mediaTypes = [NSArray arrayWithObjects:(NSString *)kUTTypeImage, (NSString *)kUTTypeMovie, nil];
-                    self.imagePicker.videoQuality = UIImagePickerControllerQualityTypeHigh;
-                    self.imagePicker.videoMaximumDuration = 60.0; // Maximum video duration
-                    
-                    // Present camera
+
+                    NSArray *availableMediaTypes = [UIImagePickerController availableMediaTypesForSourceType:UIImagePickerControllerSourceTypeCamera];
+                    if ([availableMediaTypes containsObject:(NSString *)kUTTypeMovie]) {
+                        self.imagePicker.mediaTypes = @[(NSString *)kUTTypeImage, (NSString *)kUTTypeMovie];
+                        self.imagePicker.videoQuality = UIImagePickerControllerQualityTypeHigh;
+                        self.imagePicker.videoMaximumDuration = 60.0;
+                    } else {
+                        self.imagePicker.mediaTypes = @[(NSString *)kUTTypeImage];
+                    }
+
                     [self presentModalViewController:self.imagePicker animated:YES];
-                    
+                };
+
+                if (cameraAuthStatus == AVAuthorizationStatusNotDetermined) {
+                    [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
+                        if (granted) {
+                            if (micAuthStatus == AVAuthorizationStatusNotDetermined) {
+                                [AVCaptureDevice requestAccessForMediaType:AVMediaTypeAudio completionHandler:^(BOOL grantedAudio) {
+                                    if (grantedAudio) dispatch_async(dispatch_get_main_queue(), presentCamera);
+                                }];
+                            } else if (micAuthStatus == AVAuthorizationStatusAuthorized) {
+                                dispatch_async(dispatch_get_main_queue(), presentCamera);
+                            }
+                        }
+                    }];
+                } else if (micAuthStatus == AVAuthorizationStatusNotDetermined) {
+                    [AVCaptureDevice requestAccessForMediaType:AVMediaTypeAudio completionHandler:^(BOOL grantedAudio) {
+                        if (grantedAudio) dispatch_async(dispatch_get_main_queue(), presentCamera);
+                    }];
                 } else {
-                    // You can submit an alert or simply allow photo capture.
-                    self.imagePicker = [[UIImagePickerController alloc] init];
-                    self.imagePicker.delegate = self;
-                    self.imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
-                    self.imagePicker.allowsEditing = NO;
-                    self.imagePicker.mediaTypes = [NSArray arrayWithObjects:(NSString *)kUTTypeImage, nil]; // Just photos
-                    
-                    // Introduce the camera
-                    [self presentModalViewController:self.imagePicker animated:YES];
+                    presentCamera();
                 }
             } else {
                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
-                                                                message:@"This device doesn't have an camera."
+                                                                message:@"This device doesn't have a camera."
                                                                delegate:self
                                                       cancelButtonTitle:@"OK"
                                                       otherButtonTitles:nil];
@@ -545,22 +576,21 @@
     NSString *author = [[[[self.chatMessages objectAtIndex:(indexPath.row + hiddenMessages)] objectForKey:@"id"] objectForKey:@"participant"] objectForKey:@"user"];
     
     for(NSDictionary *contact in appDelegate.contactsViewController.contactList){
-        if([[contact objectForKey:@"number"] isEqualToString:author]){
-            if([[contact objectForKey:@"number"] isEqualToString:[appDelegate.contactsViewController.myContact objectForKey:@"number"]]){
+        NSString *contactNumber = contact[@"number"];
+        NSNumber *isMyContact = contact[@"isMyContact"];
+        
+        if ([contactNumber isKindOfClass:[NSString class]] && [contactNumber isEqualToString:author]) {
+            if([contactNumber isEqualToString:[appDelegate.contactsViewController.myContact objectForKey:@"number"]]){
                 return WSPContactType_toString[YOUUSER];
+            } else if([isMyContact respondsToSelector:@selector(boolValue)] && [isMyContact boolValue]){
+                return contact[@"shortName"];
             } else {
-                if([[contact objectForKey:@"isMyContact"] boolValue] == true){
-                    return [contact objectForKey:@"shortName"];
-                } else {
-                    return [contact objectForKey:@"formattedNumber"];
-                }
+                return contact[@"pushname"];
             }
         }
     }
-    return @"";
     
-    // Mover esta línea fuera del bucle para devolver un valor predeterminado solo si no se encuentra una coincidencia
-    //return [participant objectForKey:@"formattedNumber"];
+    return @"Unknown";
 }
 
 - (BOOL)hasReplyForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -602,19 +632,33 @@
     NSString* author = [[[[self.chatMessages objectAtIndex:(indexPath.row + hiddenMessages)] objectForKey:@"_data"] objectForKey:@"quotedParticipant"] objectForKey:@"user"];
     
     for(NSDictionary *contact in appDelegate.contactsViewController.contactList){
-        if([[contact objectForKey:@"number"] isEqualToString:author]){
-            if([[contact objectForKey:@"number"] isEqualToString:[appDelegate.contactsViewController.myContact objectForKey:@"number"]]){
-                return WSPContactType_toString[YOUUSER];
-            } else {
-                if([[contact objectForKey:@"isMyContact"] boolValue] == true){
-                    return [contact objectForKey:@"shortName"];
-                } else {
-                    return [contact objectForKey:@"formattedNumber"];
-                }
-            }
+        NSDictionary *contactId = [contact[@"id"] isKindOfClass:[NSDictionary class]] ? contact[@"id"] : nil;
+        NSString *contactUser = [contactId[@"user"] isKindOfClass:[NSString class]] ? contactId[@"user"] : nil;
+        NSString *contactNumber = [contact[@"number"] isKindOfClass:[NSString class]] ? contact[@"number"] : nil;
+        
+        if (!(contactUser && [contactUser isEqualToString:author])) continue;
+
+        NSString *myNumber = [appDelegate.contactsViewController.myContact[@"number"] isKindOfClass:[NSString class]]
+                             ? appDelegate.contactsViewController.myContact[@"number"]
+                             : nil;
+
+        if (myNumber && contactNumber && [contactNumber isEqualToString:myNumber]) {
+            return WSPContactType_toString[YOUUSER];
+        }
+
+        NSString *shortName = [contact[@"shortName"] isKindOfClass:[NSString class]] ? contact[@"shortName"] : nil;
+        NSString *pushName = [contact[@"pushname"] isKindOfClass:[NSString class]] ? contact[@"pushname"] : nil;
+
+        if (shortName.length > 0) {
+            return shortName;
+        } else if (pushName.length > 0) {
+            return pushName;
+        } else if (contactNumber.length > 0) {
+            return [NSString stringWithFormat:@"+%@", contactNumber];
         }
     }
-    return @"";
+    
+    return @"Unknown";
 }
 
 - (BOOL)hasMediaForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -657,7 +701,7 @@
 }
 
 - (void)downloadAndProcessImageContact:(NSString *)ocontactNumber {
-    [WhatsAppAPI downloadAndProcessImage:ocontactNumber andIsGroup:FALSE];
+    [WhatsAppAPI downloadAndProcessImage:ocontactNumber];
 }
 
 - (UIImage *)avatarImageForIncomingMessageForRowAtIndexPath:(NSIndexPath *)indexPath

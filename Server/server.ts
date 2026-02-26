@@ -16,8 +16,6 @@ console.log("Using browser from: ", utils.SERVER_CONFIG.CHROME_PATH);
 if (!fs.existsSync(utils.ffmpegPath))
   console.log("[Warning] FFmpeg does not exist!");
 
-ffmpeg.setFfmpegPath(utils.ffmpegPath);
-
 // Initialize Express app
 const app = express();
 
@@ -292,7 +290,9 @@ app.get("/getAudioData/:audioId", async (req, res) => {
                   res.status(500).send("Error sending converted file.");
                 }
               } else {
-                fs.unlinkSync(val);
+                if (fs.existsSync(val)) {
+                  fs.unlinkSync(val);
+                }
               }
             });
           }
@@ -350,57 +350,8 @@ app.get("/getMediaData/:mediaId", async (req, res) => {
       `Downloaded media for ID ${messageId}. Mimetype: ${media.mimetype}`,
     );
 
-    const isVideo = media.mimetype.startsWith("video/");
-
-    if (isVideo) {
-      console.log("is mp4, starting conversion for iOS 3");
-      const tempDir = os.tmpdir();
-
-      const safeFilename = messageId.replace(/[^a-zA-Z0-9.-]/g, "_");
-      const rawFile = path.join(tempDir, `${safeFilename}.mp4`);
-      const movFile = path.join(tempDir, `${safeFilename}.mov`);
-
-      fs.writeFileSync(rawFile, Buffer.from(media.data, "base64"));
-
-      console.log("Converting video for iOS 3 standards");
-      const cmd = `"${utils.ffmpegPath}" -y -i "${rawFile}" -vf "scale='min(640,iw)':'min(480,ih)':force_original_aspect_ratio=decrease,fps=30,yadif" -c:v libx264 -preset veryfast -crf 23 -c:a aac -b:a 160k -ar 48000 -ac 2 -movflags +faststart "${movFile}"`;
-
-      const child = exec(cmd, (err) => {
-        if (err) {
-          console.error("FFmpeg error:", err);
-          fs.unlink(rawFile, () => {});
-          fs.unlink(movFile, () => {});
-          return res.status(500).send("Failed to convert MP4 to MOV");
-        }
-
-        res.setHeader("Content-Type", "video/quicktime");
-        const stream = fs.createReadStream(movFile);
-        stream.pipe(res);
-
-        stream.on("close", () => {
-          fs.unlink(rawFile, () => {});
-          fs.unlink(movFile, () => {});
-        });
-        stream.on("error", (streamErr) => {
-          console.error("Stream error:", streamErr);
-          fs.unlink(rawFile, () => {});
-          fs.unlink(movFile, () => {});
-          if (!res.headersSent) {
-            res.status(500).end();
-          }
-        });
-      });
-      child.stdout &&
-        child.stdout.on("data", (data) => console.log("ffmpeg stdout:", data));
-      child.stderr &&
-        child.stderr.on("data", (data) =>
-          console.error("ffmpeg stderr:", data),
-        );
-    } else {
-      // Send all other media types as-is
-      res.setHeader("Content-Type", media.mimetype);
-      res.send(Buffer.from(media.data, "base64"));
-    }
+    res.setHeader("Content-Type", media.mimetype);
+    res.send(Buffer.from(media.data, "base64"));
   } catch (error) {
     console.error("Media error:", error);
     if (!res.headersSent) {
@@ -470,6 +421,7 @@ app.post("/sendMessage/:contactId", async (req, res) => {
       fs.writeFileSync(inputPath, Buffer.from(base64, "base64"));
 
       ffmpeg(inputPath)
+        .setFfmpegPath(utils.ffmpegPath)
         .toFormat("mp3")
         .on("end", async () => {
           fs.unlinkSync(inputPath);
@@ -535,6 +487,7 @@ app.post("/sendMessage/:contactId", async (req, res) => {
 
       await new Promise((resolve, reject) => {
         ffmpeg(inputImagePath)
+          .setFfmpegPath(utils.ffmpegPath)
           .outputOptions([
             "-vcodec",
             "libwebp",

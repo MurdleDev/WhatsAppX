@@ -12,9 +12,9 @@ export const SERVER_CONFIG = JSON.parse(
 console.log(`Using ${path.join(process.cwd(), "config.json")}`);
 
 export const ffmpegPath: string =
-  !SERVER_CONFIG.ffmpegPath || fs.existsSync(SERVER_CONFIG.ffmpegPath)
-    ? path.join(process.cwd(), "ffmpeg", "ffmpeg.exe")
-    : SERVER_CONFIG.ffmpegPath;
+  !SERVER_CONFIG.FFMPEG_PATH
+    ? path.join(process.cwd(), "bin", "ffmpeg")
+    : SERVER_CONFIG.FFMPEG_PATH;
 
 export function buildContactId(id: string, isGroup = false) {
   return id + (isGroup ? "@g.us" : "@c.us");
@@ -115,4 +115,13 @@ export async function generateVideoThumbnail(
       reject(error);
     }
   });
+}
+
+export function withTimeout(promise, ms) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("getProfilePicUrl timeout")), ms)
+    ),
+  ]);
 }

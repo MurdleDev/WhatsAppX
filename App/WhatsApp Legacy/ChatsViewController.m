@@ -191,14 +191,20 @@ alpha:1.0]
     
     if(isGroup){
         NSString* author = [[[[dic objectForKey:@"lastMessage"] objectForKey:@"_data"] objectForKey:@"author"] objectForKey:@"user"];
+        
         for(NSDictionary *contact in appDelegate.contactsViewController.contactList){
-            if([[contact objectForKey:@"number"] isEqualToString:author]){
-                
-                if([[contact objectForKey:@"isMyContact"] boolValue] == true){
-                    userThatWrited = [NSString stringWithFormat:@"%@:", [contact objectForKey:@"shortName"]];
+            NSString *contactId = contact[@"id"][@"user"];
+            NSString *contactNumber = contact[@"number"];
+            NSNumber *isMyContact = contact[@"isMyContact"];
+            
+            if ([contactNumber isKindOfClass:[NSString class]] && [contactNumber isEqualToString:author]) {
+                if([isMyContact respondsToSelector:@selector(boolValue)] && [isMyContact boolValue]){
+                    userThatWrited = contact[@"shortName"];;
                 } else {
-                    userThatWrited = [NSString stringWithFormat:@"%@:", [contact objectForKey:@"formattedNumber"]];
+                    userThatWrited = contact[@"pushname"];
                 }
+            } else if ([contactId isEqualToString:author]) {
+                userThatWrited = @"Unknown";
             }
         }
     }
@@ -258,9 +264,7 @@ alpha:1.0]
             [appDelegate.profileImages setObject:[UIImage imageWithData:imageData] forKey:cell.contactNumber];
         }
         if(![appDelegate.profileImages objectForKey:cell.contactNumber]){
-            [self performSelectorInBackground:@selector(downloadAndProcessImageProfile:) withObject:[NSDictionary dictionaryWithObjectsAndKeys:
-                                                                                                     cell, @"cell",
-                                                                                                     [NSNumber numberWithBool:isGroup], @"isGroup", nil]];
+            [self performSelectorInBackground:@selector(downloadAndProcessImageProfile:) withObject:cell];
         } else {
             cell.largeImage = [appDelegate.profileImages objectForKey:cell.contactNumber];
             CGFloat targetWidth = (IS_RETINA ? 114.0 : 72.0); // Adjust this according to your needs
@@ -282,9 +286,7 @@ alpha:1.0]
             [appDelegate.profileImages setObject:[UIImage imageWithData:imageData] forKey:cell.contactNumber];
         }
         if(![appDelegate.profileImages objectForKey:cell.contactNumber]){
-            [self performSelectorInBackground:@selector(downloadAndProcessImageProfile:) withObject:[NSDictionary dictionaryWithObjectsAndKeys:
-                                                                                                   cell, @"cell",
-                                                                                                   [NSNumber numberWithBool:isGroup], @"isGroup", nil]];
+            [self performSelectorInBackground:@selector(downloadAndProcessImageProfile:) withObject:cell];
         } else {
             cell.largeImage = [appDelegate.profileImages objectForKey:cell.contactNumber];
             CGFloat targetWidth = (IS_RETINA ? 114.0 : 72.0); // Adjust this according to your needs
@@ -302,10 +304,8 @@ alpha:1.0]
     return cell;
 }
 
-- (void)downloadAndProcessImageProfile:(NSDictionary *)params {
-    ChatPreviewItem *cell = [params objectForKey:@"cell"];
-    BOOL isGroup = [[params objectForKey:@"isGroup"] boolValue];
-    [WhatsAppAPI downloadAndProcessImage:cell.contactNumber andIsGroup:isGroup];
+- (void)downloadAndProcessImageProfile:(ChatPreviewItem *)cell {
+    [WhatsAppAPI downloadAndProcessImage:cell.contactNumber];
 }
 
 - (void)onlyReload {
@@ -342,7 +342,6 @@ alpha:1.0]
         }
         [[UIApplication sharedApplication] setApplicationIconBadgeNumber:unreadCount];
         [self.tableView reloadData];
-        //[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
     }
 }
 
@@ -384,8 +383,22 @@ alpha:1.0]
                 groupListObj = @[];
             }
 
-            self.chatList = (NSArray *)chatListObj;
-            self.groupList = (NSArray *)groupListObj;
+            self.chatList  = (NSArray *)chatListObj;
+            self.groupList = (NSArray *)groupListObj ?: @[];
+
+            NSMutableArray *mergedChats = [NSMutableArray arrayWithArray:self.chatList];
+            
+            [mergedChats addObjectsFromArray:self.groupList];
+            [mergedChats sortUsingComparator:^NSComparisonResult(NSDictionary *a, NSDictionary *b) {
+                NSTimeInterval t1 = [a[@"timestamp"] doubleValue];
+                NSTimeInterval t2 = [b[@"timestamp"] doubleValue];
+
+                if (t1 > t2) return NSOrderedAscending;
+                if (t1 < t2) return NSOrderedDescending;
+                return NSOrderedSame;
+            }];
+
+            self.chatList = mergedChats;
 
             NSInteger chatBadge = 0;
             NSInteger unreadCount = 0;

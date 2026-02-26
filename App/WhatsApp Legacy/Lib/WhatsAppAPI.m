@@ -92,32 +92,35 @@ NSString * const WSPMsgMediaType_toString[] = {
     }
 }
 
-+ (void)downloadAndProcessImage:(NSString *)contactNumber andIsGroup:(BOOL)isGroup {    
++ (void)downloadAndProcessImage:(NSString *)contactNumber {
+    NSString *safeContactNumber = [contactNumber copy];
+    
     // Generar la URL de la imagen
-    NSString *imgURL;
-    if(isGroup == FALSE){
-        imgURL = [NSString stringWithFormat:@"%@/getProfileImg/%@", [[NSUserDefaults standardUserDefaults] stringForKey:@"wspl-b-address"], contactNumber];
-    } else {
-        imgURL = [NSString stringWithFormat:@"%@/getGroupImg/%@", [[NSUserDefaults standardUserDefaults] stringForKey:@"wspl-b-address"], contactNumber];
-    }
+    NSString *imgURL = [NSString stringWithFormat:@"%@/getAvatarImg/%@", [[NSUserDefaults standardUserDefaults] stringForKey:@"wspl-b-address"], safeContactNumber];;
     
     // Descargar la imagen
     NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:imgURL]];
     UIImage *profImg = [UIImage imageWithData:imageData];
-    
-    // Verificar si la imagen se descargó correctamente
-    if (profImg) {
-        // Guardar la imagen en el cache y en NSUserDefaults
-        //[appDelegate.profileImages setObject:profImg forKey:contactNumber];
-        [[NSUserDefaults standardUserDefaults] setObject:UIImagePNGRepresentation(profImg) forKey:[NSString stringWithFormat:@"%@-largeprofile", contactNumber]];
-        [[NSUserDefaults standardUserDefaults] synchronize];
+    if (!profImg) {
+        NSLog(@"Failed to convert data to UIImage");
+        return;
     }
+
+    NSData *pngData = UIImagePNGRepresentation(profImg);
+    if (!pngData) {
+        NSLog(@"Failed to convert UIImage to PNG data");
+        return;
+    }
+    
+    [[NSUserDefaults standardUserDefaults] setObject:pngData forKey:[NSString stringWithFormat:@"%@-largeprofile", safeContactNumber]];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 + (NSDictionary *)getContactInfo:(NSString *)contactNumber {
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    for(NSDictionary *contact in appDelegate.contactsViewController.contactList){
-        if ([[contact objectForKey:@"number"] isEqualToString:contactNumber]) {
+    for (NSDictionary *contact in appDelegate.contactsViewController.contactList) {
+        id number = contact[@"number"];
+        if ([number isKindOfClass:[NSString class]] && [number length] > 0 && [number isEqualToString:contactNumber]) {
             return contact;
         }
     }

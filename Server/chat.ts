@@ -6,6 +6,7 @@ import * as os from "os";
 import * as path from "path";
 import { Client, MessageMedia } from "whatsapp-web.js";
 import { chatCache, refreshChats } from "./cache"
+import { withTimeout } from "./utils";
 
 export function setUpListGetters(app: express.Express, client: Client) {
   app.get("/getChats", async (_, res) => {
@@ -52,8 +53,7 @@ export function setUpListGetters(app: express.Express, client: Client) {
         if (nameA > nameB) return 1;
         return 0;
       });
-
-      res.json(contactList);
+      res.json({ contactList });
     } catch (error) {
       res.status(500).send("Failed to get contacts: " + error.message);
     }
@@ -78,11 +78,13 @@ export function setUpListGetters(app: express.Express, client: Client) {
 }
 
 export function setUpChatGetters(app: express.Express, client: Client) {
-  app.get("/getProfileImg/:id", async (req, res) => {
+  app.get("/getAvatarImg/:id", async (req, res) => {
     try {
-      const profilePicUrl = await client.getProfilePicUrl(
-        req.params.id,
+      const profilePicUrl = await withTimeout(
+        client.getProfilePicUrl(req.params.id),
+        5000
       );
+      
       if (!profilePicUrl) {
         return res.status(404).send("");
       }
@@ -96,39 +98,6 @@ export function setUpChatGetters(app: express.Express, client: Client) {
       res.send(buffer);
     } catch (error) {
       res.status(500).send(error.message);
-    }
-  });
-
-  app.get("/getGroupImg/:id", async (req, res) => {
-    try {
-      const profilePicUrl = await client.getProfilePicUrl(
-        req.params.id + "@g.us",
-      );
-      const response = await axios.get(profilePicUrl, {
-        responseType: "arraybuffer",
-      });
-      const buffer = Buffer.from(response.data, "binary");
-
-      res.set("Content-Type", response.headers["content-type"]);
-      res.send(buffer);
-    } catch (error) {
-      res.status(500).send(error.message);
-    }
-  });
-
-  app.get("/getProfileImgHash/:id", async (req, res) => {
-    try {
-      const profilePicUrl = await client.getProfilePicUrl(
-        req.params.id + "@c.us",
-      );
-      const response = await axios.get(profilePicUrl, {
-        responseType: "arraybuffer",
-      });
-      const buffer = Buffer.from(response.data, "binary");
-      const hash = crypto.createHash("md5").update(buffer).digest("hex");
-      res.send(hash);
-    } catch (error) {
-      res.send(null);
     }
   });
 

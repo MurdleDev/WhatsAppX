@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -53,6 +53,8 @@
 	<string>Required for sending voice messages</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Required for viewing and sending images</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Required to record videos or take photos</string>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

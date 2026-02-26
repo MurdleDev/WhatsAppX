@@ -147,7 +147,7 @@
 }
 
 - (void)downloadAndProcessImageContact:(ContactItem *)cell {
-    [WhatsAppAPI downloadAndProcessImage:cell.contactNumber andIsGroup:FALSE];
+    [WhatsAppAPI downloadAndProcessImage:cell.contactNumber];
     //[self performSelectorOnMainThread:@selector(setImageCell:) withObject:cell waitUntilDone:YES];
     /*NSData* imageData = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@-largeprofile", cell.contactNumber]];
     if(imageData){
@@ -177,7 +177,7 @@
         NSData* imageData = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@-largeprofile", [self.myContact objectForKey:@"number"]]];
         if (!imageData){
             if(![appDelegate.profileImages objectForKey:[self.myContact objectForKey:@"number"]] && appDelegate.chatSocket.isConnected == YES && [CocoaFetch connectedToServers]){
-                [WhatsAppAPI downloadAndProcessImage:[self.myContact objectForKey:@"number"] andIsGroup:FALSE];
+                [WhatsAppAPI downloadAndProcessImage:[self.myContact objectForKey:@"number"]];
             }
         } else {
             [appDelegate.profileImages setObject:[UIImage imageWithData:imageData] forKey:[self.myContact objectForKey:@"number"]];
@@ -193,9 +193,9 @@
 }
 
 - (void)fetcherDidFinishWithJSON:(NSDictionary *)json error:(NSError *)error {
-    /*if (json){
+    if (json){
         NSMutableArray* filteredContactList = [[NSMutableArray alloc]init];
-        [CocoaFetch saveDictionaryToJSON:json withFileName:@"contactList"];
+        //[CocoaFetch saveDictionaryToJSON:json withFileName:@"contactList"];
         self.contactList = [json objectForKey:@"contactList"];
         self.myContact = [WhatsAppAPI getMyContact];
         for (NSDictionary *contact in self.contactList){
@@ -205,7 +205,7 @@
         }
         self.filteredContactList = filteredContactList;
         [self.tableView reloadData];
-    }*/
+    }
 }
 
 /*

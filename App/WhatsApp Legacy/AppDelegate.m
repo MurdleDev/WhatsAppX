@@ -25,11 +25,11 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
     self.voiceNoteManager = [[VoiceNoteAPI alloc] init];
     [self.voiceNoteManager setupAudioRecorder];
     self.serverConnect = 0;
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.window.backgroundColor = [UIColor whiteColor];
     // Override point for customization after application launch.
     self.contactsViewController = [[ContactsViewController alloc] initWithNibName:@"ContactsViewController" bundle:nil];
     self.contactsViewController.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemContacts tag:0];
@@ -65,8 +65,6 @@
     if([[NSUserDefaults standardUserDefaults] stringForKey:@"doneSetup"] != nil){
         NSLog(@"Connecting to TCP server");
         [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
-        
-        self.tabBarController.view.frame = [[UIScreen mainScreen] applicationFrame];
         self.window.rootViewController = self.tabBarController;
         
         UIView *baseView = self.tabBarController.view;
@@ -78,7 +76,6 @@
         [self connectToServerWithIp:[[NSUserDefaults standardUserDefaults] stringForKey:@"wspl-a-address"]
                         andWithPort:[[[NSUserDefaults standardUserDefaults] stringForKey:@"wspl-a-port"] intValue]];
 
-        [self.tabBarController.view setFrame: [[UIScreen mainScreen] applicationFrame]];
         [self.window addSubview: self.tabBarController.view];
         
     } else if ([[NSUserDefaults standardUserDefaults] stringForKey:@"setupStage1"] != nil){
@@ -99,36 +96,6 @@
     [HUD release];
     self.chatSocket = nil;
     [super dealloc];
-}
-
-- (void)didRotate:(NSNotification *)notification {
-    UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
-    if(orientation != UIDeviceOrientationUnknown && orientation != UIDeviceOrientationPortraitUpsideDown){
-        CGAffineTransform transform;
-        
-        if(orientation != UIDeviceOrientationPortraitUpsideDown){
-            switch (orientation) {
-                case UIDeviceOrientationLandscapeLeft:
-                    transform = CGAffineTransformMakeRotation(M_PI_2);
-                    break;
-                case UIDeviceOrientationLandscapeRight:
-                    transform = CGAffineTransformMakeRotation(-M_PI_2);
-                    break;
-                case UIDeviceOrientationPortrait:
-                default:
-                    transform = CGAffineTransformIdentity;
-                    break;
-            }
-            
-            /*[UIView beginAnimations:nil context:NULL];
-            [UIView setAnimationDuration:0.5];*/
-            [[UIApplication sharedApplication] setStatusBarOrientation:orientation animated:NO];
-            self.tabBarController.view.transform = transform;
-            [self.tabBarController.view setFrame: [[UIScreen mainScreen] applicationFrame]];
-            [self.window layoutIfNeeded];
-            //[UIView commitAnimations];
-        }
-    }
 }
 
 -(void)checkConnection

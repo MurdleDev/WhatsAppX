@@ -72,7 +72,7 @@ alpha:1.0]
 }
 
 - (void)downloadAndProcessImageContact:(NSString *)ocontactNumber {
-    [WhatsAppAPI downloadAndProcessImage:ocontactNumber andIsGroup:FALSE];
+    [WhatsAppAPI downloadAndProcessImage:ocontactNumber];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath

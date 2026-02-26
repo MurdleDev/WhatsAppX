@@ -366,7 +366,6 @@
     
     [cell setUserWrited:[self.dataSource userNameForRowAtIndexPath:indexPath]];
     [cell setMessage:[self.dataSource textForRowAtIndexPath:indexPath]];
-    [cell setBackgroundColor:self.tableView.backgroundColor];
     return cell;
 }
 

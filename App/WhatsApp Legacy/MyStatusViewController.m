@@ -130,18 +130,9 @@
         
     } else if (indexPath.section == 2) {
         if (indexPath.row == 0) {
-            [cell setText:@"Clear Status"];
-            [cell setTextColor:[UIColor whiteColor]];
-            [cell setTextAlignment:UITextAlignmentCenter];
-            [cell setBackgroundColor:[UIColor clearColor]];
-            
-            UIImage *normalImage = [[UIImage imageNamed:@"RedButton.png"] stretchableImageWithLeftCapWidth:7.0f topCapHeight:7.0f];
-            UIImageView *backgroundImageView = [[UIImageView alloc] initWithImage:normalImage];
-            cell.backgroundView = backgroundImageView;
-            
-            UIImage *selectedImage = [[UIImage imageNamed:@"RedButtonPressed.png"] stretchableImageWithLeftCapWidth:7.0f topCapHeight:7.0f];
-            UIImageView *selectedBackgroundImageView = [[UIImageView alloc] initWithImage:selectedImage];
-            cell.selectedBackgroundView = selectedBackgroundImageView;
+            cell.textLabel.text = @"Clear Status";
+            cell.textLabel.textAlignment = NSTextAlignmentCenter; 
+            cell.textLabel.textColor = [UIColor colorWithRed:0.0f green:122.0f/255.0f blue:1.0f alpha:1.0f];
         }
     }
     

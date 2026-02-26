@@ -15,7 +15,7 @@
 + (void)getChatListAsync;
 + (void)getContactListAsync;
 + (void)getBroadcastListAsync;
-+ (void)downloadAndProcessImage:(NSString *)contactNumber andIsGroup:(BOOL)isGroup;
++ (void)downloadAndProcessImage:(NSString *)contactNumber;
 + (NSDictionary *)getContactInfo:(NSString *)contactNumber;
 + (NSDictionary *)getChatInfo:(NSString *)contactNumber;
 + (void)fetchMessagesfromNumber:(NSString *)contactNumber isGroup:(BOOL)isGroup light:(BOOL)light;

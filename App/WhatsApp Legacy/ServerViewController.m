@@ -41,6 +41,10 @@
     self.title = @"Server";
     self.view.backgroundColor = [UIColor whiteColor];
     
+    self.edgesForExtendedLayout = UIRectEdgeNone;
+    self.extendedLayoutIncludesOpaqueBars = NO;
+    self.automaticallyAdjustsScrollViewInsets = NO;
+    
     self.serverA.delegate = self;
     self.serverB.delegate = self;
     self.serverAport.delegate = self;
