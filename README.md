@@ -1,13 +1,24 @@
 <div align="center">
 <img src="App/WhatsApp%20Legacy/Images/logo_large.png" width=20% height=20%>
-<h1>WhatsAppX</h1>
+<h1>ZevenApp</h1>
 
-use whatsapp on your old iOS 7+ device i guess
+Use **WhatsApp** on your old iOS 7+ device
+<p><em>"Zeven" means "seven" in Flemish</em></p>
 
 </div>
 
-## Compilation
+## Usage
+This section is split in two parts: the app and the companion server
 
+### App
+- Get the latest build from the releases section on this repository or compile it yourself from source
+- Install it on your iDevice
+
+### Server
+ZevenApp requires you to host your own server because of the way it interfaces with WhatsApp. We cannot directly contact the WhatsApp servers from the app, and as such it needs a "middleman". You can either selfhost it at home, or get a cheap server to do it on.<br>
+<sub>*No, it is most likely not possible to remove this requirement. Please do not ask about it.*</sub>
+
+#### Guide
 - Install Bun
 - Go to Server/ and run `bun build server.ts utils.ts chat.ts --compile`. Add build target & any other flags if needed.
 - Download FFmpeg from:
@@ -22,18 +33,18 @@ use whatsapp on your old iOS 7+ device i guess
 <table style="border-collapse: separate; border-spacing: 0 10px;">
   <tr>
     <td style="vertical-align: middle;">
-      <img src="https://avatars.githubusercontent.com/u/107697031" style="width:60px; height:60px; border-radius:50%;">
+      <img src="https://avatars.githubusercontent.com/u/75683363" style="width:95px; height:60px; border-radius:50%;">
     </td>
     <td style="vertical-align: middle; padding-left: 12px; font-size: 16px;">
       murdle
     </td>
     <td style="vertical-align: middle; padding-left: 12px; font-size: 16px;">
-      Ported the application to iOS 7 and fixed up everything that the original developers left broken (most of the app)
+      Ported the application to iOS 7 and fixed up everything that the original developers left broken (aka most of the app)
     </td>
   </tr>
   <tr>
     <td style="vertical-align: middle;">
-      <img src="https://avatars.githubusercontent.com/u/107697031" style="width:60px; height:60px; border-radius:50%;">
+      <img src="https://avatars.githubusercontent.com/u/107697031" style="width:95px; height:60px; border-radius:50%;">
     </td>
     <td style="vertical-align: middle; padding-left: 12px; font-size: 16px;">
       calvink19
@@ -44,7 +55,7 @@ use whatsapp on your old iOS 7+ device i guess
   </tr>
   <tr>
     <td style="vertical-align: middle;">
-      <img src="https://avatars.githubusercontent.com/u/77564176" style="width:60px; height:60px; border-radius:50%;">
+      <img src="https://avatars.githubusercontent.com/u/77564176" style="width:95px; height:60px; border-radius:50%;">
     </td>
     <td style="vertical-align: middle; padding-left: 12px; font-size: 16px;">
       Lebao3105

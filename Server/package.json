@@ -1,7 +1,7 @@
 {
-  "name": "whatsappx-server",
+  "name": "zevenapp-server",
   "version": "0.1.0",
-  "description": "A node.js server for the WhatsAppX iOS app.",
+  "description": "A node.js server for the zevenapp iOS app.",
   "main": "server.ts",
   "scripts": {
     "start": "ts-node server.ts",
@@ -26,7 +26,7 @@
     "whatsapp",
     "legacy",
     "ios",
-    "whatsappx"
+    "zevenapp"
   ],
   "author": "calvink19",
   "license": "MIT"
